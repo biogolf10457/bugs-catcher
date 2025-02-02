@@ -29,6 +29,8 @@ export default class SummaryScore extends Phaser.Scene {
     this.score = localStorage.getItem("score");
     if (this.score > 1) {
       this.s = "s";
+    } else {
+      this.s = "";
     }
     this.summaryText = this.add.text(
       160,
