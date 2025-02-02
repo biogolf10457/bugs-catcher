@@ -26,7 +26,7 @@ export default class MainMenu extends Phaser.Scene {
     this.add.image(200, 450, "bug").setScale(1.5);
 
     //add text menu
-    this.title = this.add.text(350, 150, "Bug Catcher", {
+    this.title = this.add.text(340, 150, "Bugs Catcher", {
       font: "64px Verdana",
       color: "#faeea0",
       stroke: "#7a2c0f",

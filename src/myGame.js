@@ -23,7 +23,7 @@ export default class MyGame extends Phaser.Scene {
     this.score = 0;
     this.textScore;
     this.timedEvent;
-    this.timeCountDown = 5000;
+    this.timeCountDown = 30000;
     this.timeRemaining;
     this.textTime;
     this.isGameOver = false;
@@ -56,6 +56,16 @@ export default class MyGame extends Phaser.Scene {
       .setSize((this.player.width * 3) / 4, this.player.height / 3)
       .setOffset(this.player.width / 8, (this.player.height * 2) / 3);
 
+    //check key animation, if already exist then remove old animation for the game restarting
+    if (this.anims.exists("moving")) {
+      this.anims.remove("moving");
+    }
+    if (this.anims.exists("catching")) {
+      this.anims.remove("catching");
+    }
+    if (this.anims.exists("stay")) {
+      this.anims.remove("stay");
+    }
     //set player animation
     this.anims.create({
       key: "moving",
@@ -249,6 +259,7 @@ export default class MyGame extends Phaser.Scene {
     this.player.setVelocityX(0);
     this.player.setVelocityY(0);
     this.spawnerTimedEvent.destroy();
+    this.timedEvent.destroy();
     this.bugs.children.iterate((bug) => {
       bug.setVelocityX(0);
     });
@@ -264,5 +275,18 @@ export default class MyGame extends Phaser.Scene {
     });
     //save local storage score
     localStorage.setItem("score", this.score);
+    //wait 3 seconds and go to summary scene
+    this.time.delayedCall(
+      3000,
+      () => {
+        this.playerIsStay = true;
+        this.playerIsCatching = false;
+        this.isGameOver = false;
+        this.score = 0;
+        this.scene.start("SummaryScore");
+      },
+      [],
+      this
+    );
   }
 }

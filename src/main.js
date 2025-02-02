@@ -2,6 +2,7 @@ import "./style.css";
 import Phaser, { Physics } from "phaser";
 import MyGame from "./myGame";
 import MainMenu from "./mainMenu";
+import SummaryScore from "./summaryScore";
 
 //Phaser Game Config
 const config = {
@@ -12,10 +13,10 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      debug: true,
+      debug: false,
     },
   },
-  scene: [MainMenu, MyGame],
+  scene: [MainMenu, MyGame, SummaryScore],
 };
 
 const game = new Phaser.Game(config);
