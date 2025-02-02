@@ -3,20 +3,30 @@ import Phaser from "phaser";
 export default class MyGame extends Phaser.Scene {
   constructor() {
     super("scene-game");
+    //player
     this.player;
     this.playerIsStay = true;
     this.playerIsCatching = false;
     this.playerSpeedX = 400;
     this.playerSpeedY = 900;
     this.spiderWebLine;
+    //target
     this.bugs;
-    this.destroyAreas;
     this.spawnerTimedEvent;
+    //particle emitter
     this.emitter;
+    //controller
     this.keyA;
     this.keyD;
     this.keySpace;
+    //game info
     this.score = 0;
+    this.textScore;
+    this.timedEvent;
+    this.timeCountDown = 5000;
+    this.timeRemaining;
+    this.textTime;
+    this.isGameOver = false;
   }
 
   preload() {
@@ -85,6 +95,30 @@ export default class MyGame extends Phaser.Scene {
     });
     this.emitter.startFollow(this.player, 0, this.player.height, true);
 
+    //set game text
+    this.textScore = this.add.text(610, 530, "Score : 0", {
+      font: "32px Verdana",
+      color: "#faeea0",
+      stroke: "#7a2c0f",
+      strokeThickness: 10,
+      align: "right",
+    });
+    this.textTime = this.add.text(20, 530, "Time : 30", {
+      font: "32px Verdana",
+      color: "#faeea0",
+      stroke: "#7a2c0f",
+      strokeThickness: 10,
+      align: "left",
+    });
+
+    //set timer count down to game over
+    this.timedEvent = this.time.delayedCall(
+      this.timeCountDown,
+      this.gameOver,
+      [],
+      this
+    );
+
     //initial input controller
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -94,6 +128,15 @@ export default class MyGame extends Phaser.Scene {
   }
 
   update() {
+    //check is game over
+    if (this.isGameOver) {
+      return;
+    }
+
+    //update timer count down
+    this.timeRemaining = this.timedEvent.getRemainingSeconds();
+    this.textTime.setText(`Time : ${Math.ceil(this.timeRemaining).toString()}`);
+
     //player controller
     if (this.playerIsStay) {
       if (this.keyA.isDown) {
@@ -190,7 +233,22 @@ export default class MyGame extends Phaser.Scene {
       this.emitter.start();
       this.bounceBack();
       this.score += 1;
-      console.log(this.score);
+      this.textScore.setText(`Score : ${this.score.toString()}`);
     }
+  }
+
+  gameOver() {
+    //update timer count down last time before stop game process
+    this.timeRemaining = this.timedEvent.getRemainingSeconds();
+    this.textTime.setText(`Time : ${Math.ceil(this.timeRemaining).toString()}`);
+    //stop player movement and bugs movement
+    this.player.setVelocityX(0);
+    this.player.setVelocityY(0);
+    this.spawnerTimedEvent.destroy();
+    this.bugs.children.iterate((bug) => {
+      bug.setVelocityX(0);
+    });
+    //update state
+    this.isGameOver = true;
   }
 }
