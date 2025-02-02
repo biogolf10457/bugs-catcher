@@ -2,7 +2,7 @@ import Phaser from "phaser";
 
 export default class MyGame extends Phaser.Scene {
   constructor() {
-    super("scene-game");
+    super("MyGame");
     //player
     this.player;
     this.playerIsStay = true;
@@ -27,6 +27,7 @@ export default class MyGame extends Phaser.Scene {
     this.timeRemaining;
     this.textTime;
     this.isGameOver = false;
+    this.textTimesUp;
   }
 
   preload() {
@@ -242,6 +243,9 @@ export default class MyGame extends Phaser.Scene {
     this.timeRemaining = this.timedEvent.getRemainingSeconds();
     this.textTime.setText(`Time : ${Math.ceil(this.timeRemaining).toString()}`);
     //stop player movement and bugs movement
+    if (this.player.anims.currentAnim) {
+      this.player.anims.currentAnim.pause();
+    }
     this.player.setVelocityX(0);
     this.player.setVelocityY(0);
     this.spawnerTimedEvent.destroy();
@@ -250,5 +254,15 @@ export default class MyGame extends Phaser.Scene {
     });
     //update state
     this.isGameOver = true;
+    //show text time's up
+    this.textTimesUp = this.add.text(220, 280, "Time's Up !", {
+      font: "64px Verdana",
+      color: "#faeea0",
+      stroke: "#7a2c0f",
+      strokeThickness: 20,
+      align: "center",
+    });
+    //save local storage score
+    localStorage.setItem("score", this.score);
   }
 }
